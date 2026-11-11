@@ -1,0 +1,28 @@
+# Central configuration. Every module and dashboard page reads from here.
+paths:
+  raw_csv: data/raw/synthetic_ai_inventory_data_2024_2025.csv   # original dataset - never modified
+  processed: data/processed/inventory_clean.parquet            # cleaned + derived columns
+  features: data/processed/features.parquet                    # model-ready features
+  reports: reports
+  models: models
+
+# Chronological split (no shuffling). Test = Q4 2025.
+split:
+  train_end: "2025-06-30"
+  val_end: "2025-09-30"
+
+as_of_date: latest           # "today" for the dashboard: latest = last date in the data, or a fixed YYYY-MM-DD
+seed: 42
+
+features:
+  lags: [1, 7, 14, 28]
+  rolling_windows: [7, 28]
+  level_window: 28
+
+service_levels: [0.90, 0.95, 0.975, 0.99]
+
+# ASSUMED costs - not present in the dataset. Editable in the dashboard.
+costs:
+  holding_rate_annual: 0.20          # share of unit cost per year
+  ordering_cost_aed: 50.0            # fixed cost per purchase order
+  stockout_goodwill_pct_of_price: 0.0  # extra penalty on top of lost margin (price - cost)
